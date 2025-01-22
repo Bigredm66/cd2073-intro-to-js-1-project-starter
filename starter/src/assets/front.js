@@ -1,4 +1,6 @@
 let currencySymbol = '$';
+let currencyVal = 'USD';
+let currencyDecPlaces = 2;
 
 // Draws product list
 function drawProducts() {
@@ -31,7 +33,7 @@ function drawCart() {
                 <h3>${element.name}</h3>
                 <p>price: ${currencySymbol}${element.price}</p>
                 <p>quantity: ${element.quantity}</p>
-                <p>total: ${currencySymbol}${itemTotal}</p>
+                <p>total: ${currencySymbol}${itemTotal.toFixed(currencyDecPlaces)}</p>
                 <button class="qup">+</button>
                 <button class="qdown">-</button>
                 <button class="remove">remove</button>
@@ -53,7 +55,12 @@ function drawCheckout() {
     let cartSum = cartTotal();
 
     let div = document.createElement('div');
-    div.innerHTML = `<p>Cart Total: ${currencySymbol}${cartSum}`;
+    if (currencyVal === "YEN") {
+        div.innerHTML = `<p>Cart Total: ${currencySymbol}${cartSum.toFixed()}`;
+    }
+    else {
+        div.innerHTML = `<p>Cart Total: ${currencySymbol}${cartSum.toFixed(2)}`;
+    };
     checkout.append(div);
 }
 
@@ -61,6 +68,7 @@ function drawCheckout() {
 drawProducts();
 drawCart();
 drawCheckout();
+
 
 document.querySelector('.products').addEventListener('click', (e) => {
     let productId = e.target.parentNode.getAttribute('data-productId');
@@ -110,82 +118,92 @@ document.querySelector('.pay').addEventListener('click', (e) => {
     amount *= 1;
 
     // Set cashReturn to return value of pay()
-    let cashReturn = pay(amount);
+    let cashReturn = pay(amount,currencyVal);
 
     let paymentSummary = document.querySelector('.pay-summary');
     let div = document.createElement('div');
 
     // If total cash received is greater than cart total thank customer
     // Else request additional funds
+    const disAmount = amount.toFixed(currencyDecPlaces);
     if (cashReturn >= 0) {
+        const disCashReturn = cashReturn.toFixed(currencyDecPlaces);
         div.innerHTML = `
-            <p>Cash Received: ${currencySymbol}${amount}</p>
-            <p>Cash Returned: ${currencySymbol}${cashReturn}</p>
+            <p>Cash Received: ${currencySymbol}${disAmount}</p>
+            <p>Cash Returned: ${currencySymbol}${disCashReturn}</p>
             <p>Thank you!</p>
         `;
     } else {
+        cashReturn = Math.abs(cashReturn);
+        const disCashReturn = cashReturn.toFixed(currencyDecPlaces);
         // reset cash field for next entry
         document.querySelector('.received').value = '';
         div.innerHTML = `
-            <p>Cash Received: ${currencySymbol}${amount}</p>
-            <p>Remaining Balance: ${cashReturn}$</p>
+            <p>Cash Received: ${currencySymbol}${disAmount}</p>
+            <p>Remaining Balance: ${disCashReturn}</p>
             <p>Please pay additional amount.</p>
             <hr/>
         `;
     }
 
     paymentSummary.append(div);
+    emptyCart();
+    drawCart();
+    drawCheckout();
 });
 
 /* Standout suggestions */
 /* Begin remove all items from cart */
-// function dropCart(){
-//     let shoppingCart = document.querySelector('.empty-btn');
-//     let div = document.createElement("button");
-//     div.classList.add("empty");
-//     div.innerHTML =`Empty Cart`;
-//     shoppingCart.append(div);
-// }
-// dropCart();
+function dropCart(){
+    let shoppingCart = document.querySelector('.empty-btn');
+    let div = document.createElement("button");
+    div.classList.add("empty");
+    div.innerHTML =`Empty Cart`;
+    shoppingCart.append(div);
+}
+dropCart();
 
-// document.querySelector('.empty-btn').addEventListener('click', (e) => {
-//     if (e.target.classList.contains('empty')){
-//         emptyCart();
-//         drawCart();
-//         drawCheckout();
-//     }
-// })
+document.querySelector('.empty-btn').addEventListener('click', (e) => {
+    if (e.target.classList.contains('empty')){
+        emptyCart();
+        drawCart();
+        drawCheckout();
+    }
+})
 /* End all items from cart */
-
 /* Begin currency converter */
-// function currencyBuilder(){
-//     let currencyPicker = document.querySelector('.currency-selector');
-//     let select = document.createElement("select");
-//     select.classList.add("currency-select");
-//     select.innerHTML = `<option value="USD">USD</option>
-//                         <option value="EUR">EUR</option>
-//                         <option value="YEN">YEN</option>`;
-//     currencyPicker.append(select);
-// }
-// currencyBuilder();
+function currencyBuilder(){
+    let currencyPicker = document.querySelector('.currency-selector');
+    let select = document.createElement("select");
+    select.classList.add("currency-select");
+    select.innerHTML = `<option value="USD">USD</option>
+                        <option value="EUR">EUR</option>
+                        <option value="YEN">YEN</option>`;
+    currencyPicker.append(select);
+}
+ currencyBuilder();
 
-// document.querySelector('.currency-select').addEventListener('change', function handleChange(event) {
-//     switch(event.target.value){
-//         case 'EUR':
-//             currencySymbol = '€';
-//             break;
-//         case 'YEN':
-//             currencySymbol = '¥';
-//             break;
-//         default:
-//             currencySymbol = '$';
-//             break;
-//      }
+ 
 
-//     currency(event.target.value);
-//     drawProducts();
-//     drawCart();
-//     drawCheckout();
-// });
+document.querySelector('.currency-select').addEventListener('change', function handleChange(event) {
+    switch(event.target.value){
+        case 'EUR':
+            currencySymbol = '€';
+            currencyDecPlaces = 2;
+            break;
+        case 'YEN':
+            currencySymbol = '¥';
+            currencyDecPlaces = 0;
+            break;
+        default:
+            currencySymbol = '$';
+            currencyDecPlaces = 2;
+            break;
+     };
+    currency(event.target.value);
+    drawProducts();
+    drawCart();
+    drawCheckout();
+});
 /* End currency converter */
 /* End standout suggestions */

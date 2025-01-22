@@ -40,7 +40,7 @@ p {
 
 .products > div img {
     max-width: 175px;
-    height: auto;
+    height: 200px;
 }
 
 .products > div h3 {
