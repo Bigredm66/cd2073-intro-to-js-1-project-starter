@@ -7,11 +7,12 @@ function drawProducts() {
     let productList = document.querySelector('.products');
     let productItems = '';
     products.forEach((element) => {
+        const disPrice = element.price.toFixed(currencyDecPlaces);
         productItems += `
             <div data-productId='${element.productId}'>
                 <img src='${element.image}'>
                 <h3>${element.name}</h3>
-                <p>price: ${currencySymbol}${element.price}</p>
+                <p>price: ${currencySymbol}${disPrice}</p>
                 <button class="add-to-cart">Add to Cart</button>
             </div>
         `;
@@ -26,12 +27,13 @@ function drawCart() {
     // clear cart before drawing
     let cartItems = '';
     cart.forEach((element) => {
-        let itemTotal = element.price * element.quantity;
+        const itemTotal = element.price * element.quantity;
+        const disPrice = element.price.toFixed(currencyDecPlaces);
 
         cartItems += `
             <div data-productId='${element.productId}'>
                 <h3>${element.name}</h3>
-                <p>price: ${currencySymbol}${element.price}</p>
+                <p>price: ${currencySymbol}${disPrice}</p>
                 <p>quantity: ${element.quantity}</p>
                 <p>total: ${currencySymbol}${itemTotal.toFixed(currencyDecPlaces)}</p>
                 <button class="qup">+</button>
@@ -118,7 +120,7 @@ document.querySelector('.pay').addEventListener('click', (e) => {
     amount *= 1;
 
     // Set cashReturn to return value of pay()
-    let cashReturn = pay(amount,currencyVal);
+    let cashReturn = pay(amount);
 
     let paymentSummary = document.querySelector('.pay-summary');
     let div = document.createElement('div');
@@ -140,7 +142,7 @@ document.querySelector('.pay').addEventListener('click', (e) => {
         document.querySelector('.received').value = '';
         div.innerHTML = `
             <p>Cash Received: ${currencySymbol}${disAmount}</p>
-            <p>Remaining Balance: ${disCashReturn}</p>
+            <p>Remaining Balance: ${currencySymbol}${disCashReturn}</p>
             <p>Please pay additional amount.</p>
             <hr/>
         `;

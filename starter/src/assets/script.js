@@ -1,71 +1,57 @@
-/* Create an array named products which you will use to add all of your product object literals that you create in the next step. */
-const products = [];
-/* Create 3 or more product objects using object literal notation 
-   Each product should include five properties
-   - name: name of product (string)
-   - price: price of product (number)
-   - quantity: quantity in cart should start at zero (number)
-   - productId: unique id for the product (number)
-   - image: picture of product (url string)
-*/
-products.push({
+let cartAmountRemaining = 0;   // global variable used to track any amounts outstanding in the cart
+const products = [];           /* Create an array named products which you will use to add all of your 
+                                  product object literals that you create in the next step. */
+const cart = [];              // Declare an empty array named cart to hold the items in the cart
+
+products.push({               // Array of all product(s) information
       name : "Cherries",
-      price : "4.45",
+      price : 4.45,
       quantity : 0,
       productId : 100,
       image : "images/cherry.jpg"
   },
   {
     name : "Oranges",
-    price : "5.60",
+    price : 5.60,
     quantity : 0,
     productId : 120,
     image : "images/orange.jpg"
   },
   {
     name : "Strawberries",
-    price : "9.90",
+    price : 9.90,
     quantity : 0,
     productId : 140,
     image : "images/strawberry.jpg"
   },
   {
     name : "Melons",
-    price : "14.50",
+    price : 14.50,
     quantity : 0,
     productId : 150,
     image : "images/melon.png"
   },
   {
     name : "Bananas",
-    price : "3.90",
+    price : 3.90,
     quantity : 0,
     productId : 160,
     image : "images/banana.png"
   },
   {
     name : "Pineapples",
-    price : "5.20",
+    price : 5.20,
     quantity : 0,
     productId : 170,
     image : "images/pineapple.jpg"
   }
 );
+// Images provided in /images folder. All images from Unsplash.com
 
-
-/* Images provided in /images folder. All images from Unsplash.com
-   - cherry.jpg by Mae Mu
-   - orange.jpg by Mae Mu
-   - strawberry.jpg by Allec Gomes
-*/
-
-/* Declare an empty array named cart to hold the items in the cart */
-const cart = [];
-
-/* Create a function named addProductToCart that takes in the product productId as an argument
-  - addProductToCart should get the correct product based on the productId
-  - addProductToCart should then increase the product's quantity
-  - if the product is not already in the cart, add it to the cart
+/**
+* @description Adds a product to the if not present and increase cart qty
+* @constructor
+* @param {string} productId - The productId of the product 
 */
 function addProductToCart(productId) {
   // Check if productId isn't already in the cart
@@ -75,7 +61,6 @@ function addProductToCart(productId) {
       inCart = true;
     }
   });
-
   
   products.forEach((element) => {
     if (element.productId === productId) {
@@ -87,9 +72,10 @@ function addProductToCart(productId) {
   });
 };
 
-/* Create a function named increaseQuantity that takes in the productId as an argument
-  - increaseQuantity should get the correct product based on the productId
-  - increaseQuantity should then increase the product's quantity
+/**
+* @description Increases product qty 
+* @constructor
+* @param {string} productId - The productId of the product 
 */
 function increaseQuantity(productId) {
   products.forEach((element) => {
@@ -98,10 +84,11 @@ function increaseQuantity(productId) {
     };
   });
 };
-/* Create a function named decreaseQuantity that takes in the productId as an argument
-  - decreaseQuantity should get the correct product based on the productId
-  - decreaseQuantity should decrease the quantity of the product
-  - if the function decreases the quantity to 0, the product is removed from the cart
+
+/**
+* @description Decreases product qty and removes from cart if qty being set to zero
+* @constructor
+* @param {string} productId - The productId of the product 
 */
 function decreaseQuantity(productId) {
   products.forEach((element) => {
@@ -114,12 +101,12 @@ function decreaseQuantity(productId) {
       };
     };
   });
-};  
+};
 
-/* Create a function named removeProductFromCart that takes in the productId as an argument
-  - removeProductFromCart should get the correct product based on the productId
-  - removeProductFromCart should update the product quantity to 0
-  - removeProductFromCart should remove the product from the cart
+/**
+* @description Sets Product Qty to zero
+* @constructor
+* @param {string} productId - The productId of the product for qty to be set to zero
 */
 function setProductQtyToZero(productId) {
   products.forEach((element) => {
@@ -129,6 +116,11 @@ function setProductQtyToZero(productId) {
   });
 };
 
+/**
+* @description Remove a product by cart by setting product qty to 0 and then removing
+* @constructor
+* @param {string} productId - The productId of the product to be reoved
+*/
 function removeProductFromCart(productId) {
   for (let i = 0; i <= cart.length; i++) {
     if (cart[i].productId === productId) {
@@ -139,11 +131,9 @@ function removeProductFromCart(productId) {
   };
 };
 
-
-/* Create a function named cartTotal that has no parameters
-  - cartTotal should iterate through the cart to get the total cost of all products
-  - cartTotal should return the total cost of the products in the cart
-  Hint: price and quantity can be used to determine total cost
+/**
+* @description Determine total cost of all products in teh cart
+* @constructor
 */
 function cartTotal() {
   let totalAmt = 0;
@@ -151,9 +141,12 @@ function cartTotal() {
     totalAmt += element.price * element.quantity;
   });
   return totalAmt;
-}
-/* Create a function called emptyCart that empties the products from the cart */
+};
 
+/**
+* @description Empty all cart items
+* @constructor
+*/
 function emptyCart() {
   //function to empty all cart items
   cart.forEach((cartItem) => {
@@ -162,45 +155,53 @@ function emptyCart() {
   cart.splice(0,cart.length);
 };
 
-function pay (amount,currencyVal) {
-  let retAmount = amount - cartTotal();
+/**
+* @description Processes a payment and calculates any amount outstanding or overpaid
+* @constructor
+* @param {string} amount - The amount tendered by customer
+*/
+function pay (amount) {
+  let retAmount = (amount + cartAmountRemaining) - cartTotal();
+  if (retAmount >= 0) {
+    cartAmountRemaining = 0;
+  } else {
+    cartAmountRemaining = retAmount;
+  };
   return retAmount;
 };
 
-/* Create a function named pay that takes in an amount as an argument
-  - amount is the money paid by customer
-  - pay will return a negative number if there is a remaining balance
-  - pay will return a positive number if money should be returned to customer
-  Hint: cartTotal function gives us cost of all the products in the cart  
+/**
+* @description Returns a currency conversion rate
+* @constructor
+* @param {string} targetCurrency - The currency being converted TO
+* @param {string} currentCurrency - The currency being converted FROM
 */
-
-/* Place stand out suggestions here (stand out suggestions can be found at the bottom of the project rubric.)*/
-
 function lookupRates(targetCurrency, currentCurrency,) {
+  //rates are sourced from xe.com 30 Jan 2025 UTC 0530
   const rates = [];
   rates.push({
       conv: "USDEUR", 
-      rate: 0.97
+      rate: 0.95980921
       },
       {
       conv: "USDYEN", 
-      rate: 156.28
+      rate: 154.59214
       },
       {
       conv: "YENUSD", 
-      rate: 0.0064
+      rate: 0.0064683567
       },
       {
       conv: "YENEUR", 
-      rate: 0.0062
+      rate: 0.0062082366
       },
       {
       conv: "EURUSD", 
-      rate: 1.03
+      rate: 1.0418992
       },
       {
       conv: "EURYEN", 
-      rate: 161.04
+      rate: 161.09087
       }
   );
   
@@ -215,15 +216,28 @@ function lookupRates(targetCurrency, currentCurrency,) {
   return rate;
 };
 
+/**
+* @description Converts product prices from old to new currency
+* @constructor
+* @param {string} currencyConversionRate - The converson rate for old to target currency
+* @param {string} targetCurrency - The currency being converted TO
+*/
 function convertProductRates(currencyConversionRate,targetCurrency) {
   products.forEach((element) => {
-     element.price = (element.price * currencyConversionRate).toFixed(currencyDecPlaces);
+     // element.price = (element.price * currencyConversionRate).toFixed(currencyDecPlaces);
+     element.price = (element.price * currencyConversionRate);
   });
 };
 
+/**
+* @description Controls the currency conversion process
+* @constructor
+* @param {string} targetCurrency - The currency being converted TO
+*/
 function currency (targetCurrency) {
   let currencyConversionRate = lookupRates(targetCurrency, currencyVal);
   convertProductRates(currencyConversionRate,targetCurrency);  
+  cartAmountRemaining = cartAmountRemaining * currencyConversionRate;
 };
 
 
