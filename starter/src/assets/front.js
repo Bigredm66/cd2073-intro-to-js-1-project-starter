@@ -1,7 +1,3 @@
-let currencySymbol = '$';
-let currencyVal = 'USD';
-let currencyDecPlaces = 2;
-
 // Draws product list
 function drawProducts() {
     let productList = document.querySelector('.products');

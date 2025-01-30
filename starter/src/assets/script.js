@@ -3,6 +3,10 @@ const products = [];           /* Create an array named products which you will 
                                   product object literals that you create in the next step. */
 const cart = [];              // Declare an empty array named cart to hold the items in the cart
 
+let currencySymbol = '$';     // Global variables used for currency
+let currencyVal = 'USD';
+let currencyDecPlaces = 2;
+
 products.push({               // Array of all product(s) information
       name : "Cherries",
       price : 4.45,
@@ -132,7 +136,7 @@ function removeProductFromCart(productId) {
 };
 
 /**
-* @description Determine total cost of all products in teh cart
+* @description Determine total cost of all products in the cart
 * @constructor
 */
 function cartTotal() {
@@ -161,7 +165,7 @@ function emptyCart() {
 * @param {string} amount - The amount tendered by customer
 */
 function pay (amount) {
-  let retAmount = (amount + cartAmountRemaining) - cartTotal();
+  let retAmount = (amount + cartAmountRemaining) - Number(cartTotal().toFixed(currencyDecPlaces));
   if (retAmount >= 0) {
     cartAmountRemaining = 0;
   } else {
@@ -224,7 +228,6 @@ function lookupRates(targetCurrency, currentCurrency,) {
 */
 function convertProductRates(currencyConversionRate,targetCurrency) {
   products.forEach((element) => {
-     // element.price = (element.price * currencyConversionRate).toFixed(currencyDecPlaces);
      element.price = (element.price * currencyConversionRate);
   });
 };
